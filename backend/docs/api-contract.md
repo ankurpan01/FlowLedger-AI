@@ -1,28 +1,18 @@
 # FlowLedger API Contract
 
-This document outlines the backend endpoints available for the frontend team.
+## Global Data Rules
+* **Currency:** All money is tracked in integer cents (e.g., $50.00 is `5000`). Currency is explicit (e.g., `USD`).
+* **Dates:** ISO 8601 format, timezone-aware.
+* **Categories:** Must be exactly: Groceries, Dining, Transport, Housing, Shopping, Entertainment, Bills, Other.
+* **Demo User:** `demo-user-001`
+* **AI Security:** Gemini may propose edits, but explicit UI confirmation is required to save them.
 
-## 1. Health Check
-* **URL:** `/health`
-* **Method:** `GET`
-* **Purpose:** Verify the backend server is running.
-
-## 2. Get Ledger Entries
-* **URL:** `/api/ledger`
-* **Method:** `GET`
-* **Purpose:** Retrieve all financial transactions.
-
-## 3. Agent Chat (Gemini AI)
-* **URL:** `/agent/chat`
-* **Method:** `POST`
-* **Purpose:** Send user prompt to Gemini and receive AI response.
-
-## 4. Agent Action Confirmation
-* **URL:** `/agent/confirm`
-* **Method:** `POST`
-* **Purpose:** Confirm and execute an action suggested by the AI agent.
-
-## 5. ML Financial Forecast
-* **URL:** `/ml/forecast`
-* **Method:** `GET`
-* **Purpose:** Retrieve predictive financial forecasting from the ML model.
+## Official Endpoints
+* `GET /health` - Server status
+* `POST /transactions/import` - Upload the CSV
+* `GET /transactions` - List all transactions
+* `PATCH /transactions/{id}` - Edit a specific transaction
+* `GET /dashboard/summary` - Get spending totals
+* `POST /ml/forecast` - AI spending prediction
+* `POST /agent/chat` - Talk to Gemini AI
+* `POST /agent/confirm` - Approve AI action
