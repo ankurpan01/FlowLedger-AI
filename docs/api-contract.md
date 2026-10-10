@@ -36,7 +36,9 @@
 * **Response (Fixture/Null state):** `{"category": "Dining", "as_of": "2026-10-10", "horizon_days": 21, "forecast_remaining_cents": null, "predicted_period_total_cents": null, "budget_cents": null, "model_version": null, "backtest_mae_cents": null, "data_quality": "not_trained"}`
 
 ## 4. Agent chat, typed events and tool registry
-* **POST /agent/chat format:** Returns standard JSON containing an array of ordered events.
+* **POST /agent/chat format:**
+  * Request: `{"message": "Update all my Uber rides to Transport"}`
+  * Response: `{"events": [{"type": "tool_call", "name": "prepare_transaction_update", "inputs": {"transaction_ids": ["txn-001", "txn-002"], "new_category": "Transport"}}, {"type": "proposal", "proposal_token": "token123", "selected_ids": ["txn-001", "txn-002"], "changes": [{"id": "txn-001", "before": {"category": "Other"}, "after": {"category": "Transport"}}], "expires_at": "2026-10-10T19:30:00Z"}, {"type": "message", "text": "Please confirm the update."}]}`
 * **Event Payloads:**
   * `message`: `{"type": "message", "text": "String response from Gemini"}`
   * `tool_call`: `{"type": "tool_call", "name": "tool_name", "inputs": {}}` (**Note:** `inputs` object is required, even if empty).
@@ -46,7 +48,7 @@
 * **Permitted Tools & Signatures:**
   * `get_transactions(merchant?: string, category?: string)` -> `List[Transaction]`
   * `get_forecast(category: string, as_of: string, horizon_days: int)` -> `ForecastResponse`
-  * `prepare_transaction_update(transaction_id: string, new_category: string)` -> `ProposalObject` (Preview before/after only; do not write).
+  * `prepare_transaction_update(transaction_ids: List[string], new_category: string)` -> `ProposalObject` (Preview before/after only; do not write).
   * `confirm_action` -> (Backend-only safety barrier. **Gemini cannot call this autonomously.** Must be triggered by user).
 
 ## 5. Proposal / confirm separation and audit rules
@@ -54,6 +56,10 @@
   * Request: `{"proposal_token": "example-token", "idempotency_key": "example-confirm-001"}`
   * Response: `{"status": "applied", "updated_ids": ["txn-001"]}`
   * **Idempotency Behavior:** A retry with a previously successful `idempotency_key` returns the **original successful response** (HTTP 200) without re-applying the database mutation.
+  * **Validation Rules:**
+    * **Ownership:** Verify the authenticated user owns all transaction IDs in the proposal.
+    * **Expiry:** Reject if the proposal token's `expires_at` has passed.
+    * **Stale-Record Check:** Verify transactions have not been modified by another process since the proposal was generated.
 
 ## 6. Error response contract
 * Expected HTTP Status Codes & Shapes:
