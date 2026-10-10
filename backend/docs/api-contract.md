@@ -6,17 +6,23 @@ This document outlines the backend endpoints available for the frontend team.
 * **URL:** `/health`
 * **Method:** `GET`
 * **Purpose:** Verify the backend server is running.
-* **Response:**
-  {
-    "status": "ok",
-    "service": "flowledger-api"
-  }
 
-## 2. Get Ledger Entries (Coming Soon)
+## 2. Get Ledger Entries
 * **URL:** `/api/ledger`
 * **Method:** `GET`
-* **Purpose:** Retrieve all financial transactions for the user.
-* **Response (Planned):**
-  [
-    {"id": 1, "amount": 50.00, "category": "Food", "date": "2026-10-09"}
-  ]
+* **Purpose:** Retrieve all financial transactions.
+
+## 3. Agent Chat (Gemini AI)
+* **URL:** `/agent/chat`
+* **Method:** `POST`
+* **Purpose:** Send user prompt to Gemini and receive AI response.
+
+## 4. Agent Action Confirmation
+* **URL:** `/agent/confirm`
+* **Method:** `POST`
+* **Purpose:** Confirm and execute an action suggested by the AI agent.
+
+## 5. ML Financial Forecast
+* **URL:** `/ml/forecast`
+* **Method:** `GET`
+* **Purpose:** Retrieve predictive financial forecasting from the ML model.
