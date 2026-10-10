@@ -38,7 +38,7 @@
 ## 4. Agent chat, typed events and tool registry
 * **POST /agent/chat format:**
   * Request: `{"message": "Update all my Uber rides to Transport"}`
-  * Response: `{"events": [{"type": "tool_call", "name": "prepare_transaction_update", "inputs": {"transaction_ids": ["txn-001", "txn-002"], "new_category": "Transport"}}, {"type": "proposal", "proposal_token": "token123", "selected_ids": ["txn-001", "txn-002"], "changes": [{"id": "txn-001", "before": {"category": "Other"}, "after": {"category": "Transport"}}], "expires_at": "2026-10-10T19:30:00Z"}, {"type": "message", "text": "Please confirm the update."}]}`
+  * Response: `{"events": [{"type": "tool_call", "name": "prepare_transaction_update", "inputs": {"transaction_ids": ["txn-001", "txn-002"], "new_category": "Transport"}}, {"type": "proposal", "proposal_token": "token123", "selected_ids": ["txn-001", "txn-002"], "changes": [{"id": "txn-001", "before": {"category": "Other"}, "after": {"category": "Transport"}}, {"id": "txn-002", "before": {"category": "Other"}, "after": {"category": "Transport"}}], "expires_at": "2026-10-10T19:30:00Z"}, {"type": "message", "text": "Please confirm the update."}]}`
 * **Event Payloads:**
   * `message`: `{"type": "message", "text": "String response from Gemini"}`
   * `tool_call`: `{"type": "tool_call", "name": "tool_name", "inputs": {}}` (**Note:** `inputs` object is required, even if empty).
