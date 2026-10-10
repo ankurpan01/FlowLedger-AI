@@ -1,0 +1,23 @@
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+**/.env.local
+
+# Python
+**/.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Node.js and Next.js
+**/node_modules/
+.next/
+out/
+dist/
+
+# macOS
+.DS_Store
