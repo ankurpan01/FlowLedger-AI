@@ -29,7 +29,7 @@ const titles = {
   ],
   predictions: [
     "AI Predictive Insights",
-    "Real forecasts, measured performance, honest limitations.",
+    "Estimate the rest of your month and understand what the numbers mean.",
   ],
   planning: [
     "Budgets & Financial Goals",

@@ -42,7 +42,7 @@ export default function PredictiveHighlight() {
           <h2>Dining · October 2026</h2>
         </div>
         <Link className="text-link" href="/predictions">
-          View model evidence ↗
+          Understand this estimate ↗
         </Link>
       </div>
       {forecast?.data_quality === "sufficient" ? (
@@ -58,9 +58,10 @@ export default function PredictiveHighlight() {
             {forecast.budget_cents == null
               ? "not set"
               : money(forecast.budget_cents, "USD")}{" "}
-            · selection MAE {money(forecast.backtest_mae_cents || 0, "USD")}.
+            · average miss in past tests: {forecast.backtest_mae_cents == null ? "not available" : money(forecast.backtest_mae_cents, "USD")}.
           </p>
           <p className="fine-print">
+            The month total adds recorded spending through October 10 to estimated spending for October 11–31. The average miss measures past errors, not a guaranteed margin for this prediction.{" "}
             Limited history; this is an estimate, not a guarantee. The
             reporting-month cards above show recorded spending.
           </p>
