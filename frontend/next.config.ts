@@ -1,17 +1,9 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
-  turbopack: {
-    rules: {
-      "*.css": {
-        loaders: ["@tailwindcss/turbopack"],
-        as: "*.css",
-      },
-    },
-  },
-};
+const staticExport = process.env.STATIC_EXPORT === "true";
+
+const nextConfig: NextConfig = staticExport
+  ? { output: "export" }
+  : { cacheComponents: true, partialPrefetching: true };
 
 export default nextConfig;
