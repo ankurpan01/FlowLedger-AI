@@ -52,7 +52,10 @@ def main():
     if arguments in (['schema-enhance'], ['migrate-enhance']):
         from app import workspace, planning, documents
         from .main import app
-        tables = [table for table in metadata.sorted_tables if table not in [transactions, proposals, audit]]
+        # `python -m app.db` also loads app.db through the routers. Use that
+        # shared metadata, not the separate __main__ module's table objects.
+        from app.db import metadata as shared_metadata, transactions as shared_transactions, proposals as shared_proposals, audit as shared_audit
+        tables = [table for table in shared_metadata.sorted_tables if table not in [shared_transactions, shared_proposals, shared_audit]]
         if arguments == ['schema-enhance']:
             from sqlalchemy.dialects import postgresql
             from sqlalchemy.schema import CreateIndex, CreateTable
@@ -63,7 +66,7 @@ def main():
         else:
             if app.state.engine is None:
                 raise SystemExit('Database is not configured.')
-            metadata.create_all(app.state.engine, tables=tables)
+            shared_metadata.create_all(app.state.engine, tables=tables)
             print('Additive enhancement schema ready.')
         return
     tables = [proposals, audit] if arguments in (["schema-agent"], ["migrate-agent"]) else [transactions]

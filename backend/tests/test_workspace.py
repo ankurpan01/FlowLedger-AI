@@ -1,4 +1,6 @@
 import io
+import subprocess
+import sys
 import tempfile
 import unittest
 from concurrent.futures import ThreadPoolExecutor
@@ -77,6 +79,14 @@ class WorkspaceTests(unittest.TestCase):
         result = self.client.post('/transactions/category/preview', headers=self.a,
             json={'transaction_ids': [foreign], 'new_category': 'Other'})
         self.assertEqual(result.status_code, 403)
+
+    def test_additive_schema_cli_uses_shared_metadata(self):
+        result = subprocess.run([sys.executable, '-m', 'app.db', 'schema-enhance'],
+            capture_output=True, text=True, check=True)
+        self.assertEqual(result.stdout.count('CREATE TABLE IF NOT EXISTS'), 7)
+        self.assertIn('flowledger_chat_turns', result.stdout)
+        self.assertIn('flowledger_documents', result.stdout)
+        self.assertNotIn('CREATE TABLE IF NOT EXISTS flowledger_transactions', result.stdout)
 
     def test_budget_preview_confirm_retry_and_cancel(self):
         p = self.preview('/planning/budget/preview', {'category': 'Dining', 'amount_cents': 7500})
