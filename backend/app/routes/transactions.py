@@ -7,7 +7,7 @@ from datetime import date, datetime, timezone
 from typing import Literal
 from uuid import uuid4
 
-from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, Request
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import func, select, update
 from sqlalchemy.dialects.postgresql import insert as pg_insert
@@ -78,13 +78,17 @@ def parse_row(row):
 
 def make_router(engine, owner_id):
     router = APIRouter()
+    default_owner = owner_id
+
+    def resolve_owner(request: Request):
+        return getattr(request.state, 'owner_id', default_owner)
 
     def require_database():
         if engine is None:
             raise HTTPException(503, {"error_code": "DATABASE_UNAVAILABLE", "message": "Database is not configured."})
 
     @router.post("/transactions/import")
-    async def import_csv(file: UploadFile = File(...)):
+    async def import_csv(file: UploadFile = File(...), owner_id=Depends(resolve_owner)):
         require_database()
         try:
             raw = await file.read(MAX_BYTES + 1)
@@ -124,7 +128,7 @@ def make_router(engine, owner_id):
         return {"imported_count": inserted, "skipped_count": skipped, "errors": errors}
 
     @router.get("/transactions")
-    def list_transactions(merchant: str | None = None, category: Category | None = None):
+    def list_transactions(merchant: str | None = None, category: Category | None = None, owner_id=Depends(resolve_owner)):
         require_database()
         query = select(table).where(table.c.owner_id == owner_id)
         if merchant:
@@ -136,7 +140,7 @@ def make_router(engine, owner_id):
             return {"transactions": [serialize(row) for row in rows]}
 
     @router.patch("/transactions/{transaction_id}")
-    def edit_category(transaction_id: str, body: CategoryEdit):
+    def edit_category(transaction_id: str, body: CategoryEdit, owner_id=Depends(resolve_owner)):
         require_database()
         scope = (table.c.id == transaction_id) & (table.c.owner_id == owner_id)
         with engine.begin() as connection:
@@ -147,7 +151,7 @@ def make_router(engine, owner_id):
             return {"transaction": serialize(row)}
 
     @router.get("/dashboard/summary")
-    def summary(month: str):
+    def summary(month: str, owner_id=Depends(resolve_owner)):
         require_database()
         if not re.fullmatch(r"\d{4}-\d{2}", month):
             invalid("month must be YYYY-MM.")

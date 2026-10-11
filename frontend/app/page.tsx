@@ -1,5 +1,5 @@
-import Dashboard from "./ui/dashboard";
+import WorkspacePage from "./ui/workspace-page";
 
 export default function Home() {
-  return <Dashboard />;
+  return <WorkspacePage view="dashboard" />;
 }

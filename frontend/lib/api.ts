@@ -15,7 +15,10 @@ export async function api<T>(path: string, options?: RequestInit): Promise<T> {
   if (!base) throw new Error("The data service is not configured.");
   let response: Response;
   try {
-    response = await fetch(`${base.replace(/\/$/, "")}${path}`, { ...options, cache: "no-store" });
+    const headers = new Headers(options?.headers);
+    const key = typeof window === 'undefined' ? null : localStorage.getItem('flowledger-workspace-key');
+    if (key) headers.set('Authorization', `Bearer ${key}`);
+    response = await fetch(`${base.replace(/\/$/, "")}${path}`, { ...options, headers, cache: "no-store" });
   } catch { throw new Error("The data service is unavailable. Please try again."); }
   const body = await response.json().catch(() => null);
   if (!response.ok) throw new Error(body?.message || "The request could not be completed.");

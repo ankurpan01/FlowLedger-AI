@@ -24,8 +24,7 @@ class PublicDemoLimits:
             return await self.app(scope, receive, send)
         path, method = scope["path"].rstrip("/"), scope["method"]
         group = "chat" if path == "/agent/chat" and method == "POST" else (
-            "write" if method in {"POST", "PATCH"} and (
-                path.startswith("/transactions/") or path == "/agent/confirm") else "read")
+            "write" if method in {"POST", "PATCH"} and not path.startswith('/ml/') else "read")
         with self.lock:
             now = self.clock()
             waits = []

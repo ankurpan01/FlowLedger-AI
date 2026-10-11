@@ -49,6 +49,23 @@ audit = Table(
 
 def main():
     arguments = sys.argv[1:]
+    if arguments in (['schema-enhance'], ['migrate-enhance']):
+        from app import workspace, planning, documents
+        from .main import app
+        tables = [table for table in metadata.sorted_tables if table not in [transactions, proposals, audit]]
+        if arguments == ['schema-enhance']:
+            from sqlalchemy.dialects import postgresql
+            from sqlalchemy.schema import CreateIndex, CreateTable
+            for table in tables:
+                print(str(CreateTable(table, if_not_exists=True).compile(dialect=postgresql.dialect())) + ';')
+                for index in table.indexes:
+                    print(str(CreateIndex(index, if_not_exists=True).compile(dialect=postgresql.dialect())) + ';')
+        else:
+            if app.state.engine is None:
+                raise SystemExit('Database is not configured.')
+            metadata.create_all(app.state.engine, tables=tables)
+            print('Additive enhancement schema ready.')
+        return
     tables = [proposals, audit] if arguments in (["schema-agent"], ["migrate-agent"]) else [transactions]
     if arguments in (["schema"], ["schema-agent"]):
         from sqlalchemy.dialects import postgresql
