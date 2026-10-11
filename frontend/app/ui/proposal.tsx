@@ -126,7 +126,9 @@ export default function Proposal({
                 <td>
                   {proposal.kind === "document"
                     ? `Row ${i + 1}`
-                    : c.id.slice(0, 8)}
+                    : store.rows.find((row) => row.id === c.id)
+                      ? `${store.rows.find((row) => row.id === c.id)!.merchant} · ${store.rows.find((row) => row.id === c.id)!.occurred_at.slice(0, 10)}`
+                      : c.id.slice(0, 8)}
                 </td>
                 <td>{describe(c.before)}</td>
                 <td>

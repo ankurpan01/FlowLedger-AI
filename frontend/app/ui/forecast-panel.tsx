@@ -19,7 +19,7 @@ export function ForecastResult({ forecast }: { forecast: Forecast }) {
     <p className={`rounded-xl p-4 font-medium ${gap !== null && gap < 0 ? "bg-amber-50 text-amber-900" : "bg-teal-50 text-teal-900"}`}>
       {gap === null ? "Set a budget before comparing." : gap < 0 ? `Estimated ${money(-gap, "USD")} over budget.` : gap === 0 ? "Estimated to meet the budget exactly." : `Estimated ${money(gap, "USD")} under budget.`}
     </p>
-    <p className="text-sm text-slate-600">Based on six months of saved history. Sparse purchases make this a limited baseline estimate. Historical average forecast error: {forecast.backtest_mae_cents !== null ? money(forecast.backtest_mae_cents, "USD") : "unavailable"}. This is not a guarantee or a confidence interval.</p>
+    <p className="text-sm text-slate-600">Based on six months of saved history. Sparse purchases limit this estimate. Historical average forecast error: {forecast.backtest_mae_cents !== null ? money(forecast.backtest_mae_cents, "USD") : "unavailable"}. This is not a guarantee or a confidence interval.</p>
     {forecast.horizon_days > 0 && forecast.backtest_mae_cents !== null && forecast.forecast_remaining_cents !== null && forecast.backtest_mae_cents >= forecast.forecast_remaining_cents / 2 && <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-900">Historical error is large relative to this estimate. Treat the budget comparison cautiously.</p>}
     <p className="text-sm text-slate-500">Spending to date includes only imported records. Missing purchases are not included.</p>
   </div>;
