@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { WorkspaceProvider, useWorkspace } from "./workspace-provider";
+import { TourButton, TourProvider } from "./guided-tour";
 const pages = [
   ["/", "Dashboard", "◈"],
   ["/assistant", "AI Assistant", "✧"],
@@ -54,9 +55,11 @@ function Shell({ children }: { children: React.ReactNode }) {
             ☰
           </button>
           <span>{store.workspace?.name || "Opening workspace…"}</span>
+          <div className="topbar-actions"><TourButton />
           <Link href="/assistant" className="assistant-link">
             ✧ Ask Gemini
           </Link>
+          </div>
         </header>
         <main className="page-content">
           {store.error && (
@@ -82,10 +85,6 @@ function Shell({ children }: { children: React.ReactNode }) {
           )}
           {children}
         </main>
-        <footer className="app-footer">
-          Fictional demo data · Changes require review · Forecasts are estimates
-          from limited history.
-        </footer>
       </div>
     </div>
   );
@@ -93,7 +92,7 @@ function Shell({ children }: { children: React.ReactNode }) {
 export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <WorkspaceProvider>
-      <Shell>{children}</Shell>
+      <TourProvider><Shell>{children}</Shell></TourProvider>
     </WorkspaceProvider>
   );
 }

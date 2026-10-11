@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { api, categories } from "@/lib/api";
 import { useWorkspace } from "./workspace-provider";
+import { TourButton } from "./guided-tour";
 export default function SettingsWorkspace() {
   const store = useWorkspace(),
     [name, setName] = useState(""),
@@ -51,6 +52,11 @@ export default function SettingsWorkspace() {
   }
   return (
     <div className="stack">
+      <section className="card narrow">
+        <h2>Getting started & help</h2>
+        <p className="muted">A short guide to every section, including how to read forecasts and review changes.</p>
+        <div className="actions"><TourButton>Replay guided tour</TourButton></div>
+      </section>
       <section className="card narrow">
         <h2>Workspace preferences</h2>
         <div className="form-grid">
@@ -153,9 +159,7 @@ export default function SettingsWorkspace() {
           the shared API contract.
         </p>
         <p className="warning">
-          Use fictional data for this public hackathon prototype. Workspace keys
-          provide separation, but this is not a production financial account
-          service.
+          Fictional data was used for this public hackathon prototype project.
         </p>
       </section>
     </div>
